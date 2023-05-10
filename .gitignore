@@ -1,0 +1,7 @@
+# IntelliJ IDEA
+.idea/
+OddsAndEvensGame.iml
+out/
+
+# Visual Studio Code
+.vscode/*
