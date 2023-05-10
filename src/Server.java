@@ -7,7 +7,7 @@ import java.net.Socket;
 public class Server {
     public static void main(String[] args) throws IOException {
         // Binding the server to the port
-        ServerSocket serverSocket = new ServerSocket(12345);
+        ServerSocket serverSocket = new ServerSocket(Util.getPortNumber());
         System.out.println("The server is now open!");
 
         // Opening server loop to connect and communicate with multiple clients

@@ -18,7 +18,6 @@ public class ClientHandler implements Runnable {
             this.socket = socket;
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            this.clientUsername = bufferedReader.readLine();
         } catch (IOException ioException) {
             ioException.printStackTrace();
             closeEverything();
@@ -28,6 +27,9 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
+            // Get the client username as soon as they connect with the server
+            this.clientUsername = bufferedReader.readLine();
+
             // Notifies the client and server that the connection was successful
             bufferedWrite("Server: Connection successful.");
             System.out.println(clientUsername + " has joined.");
