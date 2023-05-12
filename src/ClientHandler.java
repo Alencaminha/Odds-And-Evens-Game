@@ -27,10 +27,10 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            // Get the client username as soon as they connect with the server
+            // Get the client username as soon as they connect with the server...
             this.clientUsername = bufferedReader.readLine();
 
-            // Notifies the client and server that the connection was successful
+            // ...and notifies the client and server that the connection was successful
             bufferedWrite("Server: Connection successful.");
             System.out.println(clientUsername + " has joined.");
         } catch (IOException ioException) {
