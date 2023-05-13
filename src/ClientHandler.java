@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ClientHandler implements Runnable {
     private static final List<ClientHandler> clientsList = new ArrayList<>();
@@ -15,8 +16,8 @@ public class ClientHandler implements Runnable {
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     private String clientUsername;
+    private int playerNumber = 10;
     public boolean isEven;
-    public int playerNumber = 10;
 
     public ClientHandler(Socket socket) {
         try {
@@ -35,27 +36,40 @@ public class ClientHandler implements Runnable {
             // Get the client username and notifies the successful connection
             clientUsername = bufferedReader.readLine();
             clientsList.add(this);
-            bufferedWrite("Connection successful!");
+            messageToClient("Connection successful!");
             System.out.println(clientUsername + " has joined.");
 
-            // Get and send the matched opponent
-            ClientHandler opponent = getOpponent();
-            String opponentUsername = opponent.clientUsername;
-            bufferedWrite(opponentUsername);
-
+            // Open game loop
             while (!socket.isClosed()) {
-                // Get the player inputs
-                isEven = Boolean.parseBoolean(bufferedReader.readLine());
-                playerNumber = Integer.parseInt(bufferedReader.readLine());
-
-                // Get and send the opponent number
-                int opponentNumber = opponent.playerNumber;
-                bufferedWrite(String.valueOf(opponentNumber));
-
-                if (!Boolean.parseBoolean(bufferedReader.readLine())) {
-                    closeEverything();
-                    break;
+                // Check if the match will be a PVP
+                boolean pvpMatch = Boolean.parseBoolean(bufferedReader.readLine());
+                ClientHandler opponent = null;
+                if (pvpMatch) {
+                    // Find and send the matched opponent
+                    opponent = getOpponent();
+                    String opponentUsername = opponent.clientUsername;
+                    messageToClient(opponentUsername);
                 }
+
+                // Open match loop
+                boolean loop = true;
+                while (loop) {
+                    // Get and send the opponent number to the player
+                    int opponentNumber;
+                    if (pvpMatch) {
+                        isEven = Boolean.parseBoolean(bufferedReader.readLine());
+                        playerNumber = Integer.parseInt(bufferedReader.readLine());
+                        opponentNumber = opponent.playerNumber;
+                    } else {
+                        // Generate a random number for the machine
+                        opponentNumber = new Random().nextInt(6);
+                    }
+                    messageToClient(String.valueOf(opponentNumber));
+
+                    // Check if the player will continue this match
+                    loop = Boolean.parseBoolean(bufferedReader.readLine());
+                }
+                closeEverything();
             }
         } catch (IOException ioException) {
             closeEverything();
@@ -70,7 +84,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void bufferedWrite(String message) throws IOException {
+    private void messageToClient(String message) throws IOException {
         bufferedWriter.write(message);
         bufferedWriter.newLine();
         bufferedWriter.flush();
@@ -79,6 +93,7 @@ public class ClientHandler implements Runnable {
     private void closeEverything() {
         try {
             System.out.println(clientUsername + " has left.");
+            clientsList.remove(this);
             bufferedReader.close();
             bufferedWriter.close();
             socket.close();
