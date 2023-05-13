@@ -10,9 +10,9 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Client {
-    public static void main(String[] args) throws IOException {
-        Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
 
+    public static void main(String[] args) throws IOException {
         // Presents the player with the game main menu...
         System.out.println("""
                 WELCOME TO THE ODDS AND EVENS GAME
@@ -55,11 +55,6 @@ public class Client {
                 System.out.print("Do you want to play again? If so, type 1: ");
                 loop = scanner.nextInt() == 1;
             }
-
-            // Presents the final game score
-            System.out.println("Final score:" +
-                    "\nPlayer 1 => " + player1Score +
-                    "\nPlayer 2 => " + player2Score);
         } else {
             // Connecting to the server
             Socket socket = new Socket("localhost", 12345);
@@ -70,6 +65,7 @@ public class Client {
 
             // Gets the client username for chat identification...
             System.out.print("Enter your username: ");
+            scanner.nextLine();
             String username = scanner.nextLine();
 
             // ...and sends it to the client handler, completing the connection setup
@@ -77,23 +73,54 @@ public class Client {
             String messageReceived = bufferedReader.readLine();
             System.out.println(messageReceived);
 
-            // Sends game data to the handler
+            // Start online game loop
+            while (loop) {
+                System.out.println("\nROUND " + ++currentRound);
+
+                // Get the choice of odd or even from the player
+                System.out.print("Type 1 for odd or 2 for even: ");
+                boolean isEven = validateInput(1, 2, "Please, type only 1 or 2 for this field: ") == 2;
+
+                // Get the player number
+                System.out.print("Now choose a number from 0 to 5: ");
+                int playerNumber = validateInput(0, 5, "Please, type a number from 0 to 5 for this field: ");
+
+                // Send this inputs to the client handler
+                bufferedWrite(bufferedWriter, String.valueOf(isEven));
+                bufferedWrite(bufferedWriter, String.valueOf(playerNumber));
+
+                // Get the opponent's number
+                int opponentNumber = Integer.parseInt(bufferedReader.readLine());
+                System.out.println("The opponent's number: " + opponentNumber);
+
+                // Checks if the player won
+                if (gameWinner(isEven, playerNumber, opponentNumber)) {
+                    System.out.println("You won!");
+                    player1Score++;
+                } else {
+                    System.out.println("You lost...");
+                    player2Score++;
+                }
+
+                // Checks if the player wants to play again
+                System.out.print("Do you want to play again? If so, type 1: ");
+                loop = scanner.nextInt() == 1;
+                bufferedWrite(bufferedWriter, String.valueOf(loop));
+            }
 
             // Closing the socket + IO streams
             bufferedReader.close();
             bufferedWriter.close();
             socket.close();
         }
-    }
 
-    private static void bufferedWrite(BufferedWriter bufferedWriter, String message) throws IOException{
-        bufferedWriter.write(message);
-        bufferedWriter.newLine();
-        bufferedWriter.flush();
+        // Presents the final game score
+        System.out.println("Final score:" +
+                "\nPlayer 1 => " + player1Score +
+                "\nPlayer 2 => " + player2Score);
     }
 
     private static int validateInput(int minimalValue, int maximumValue, String incorrectInputMessage) {
-        Scanner scanner = new Scanner(System.in);
         int input = scanner.nextInt();
         while (input < minimalValue || input > maximumValue) {
             System.out.print(incorrectInputMessage);
@@ -104,5 +131,11 @@ public class Client {
 
     private static boolean gameWinner(boolean player1Even, int player1Number, int player2Number) {
         return player1Even == ((player1Number + player2Number) % 2 == 0);
+    }
+
+    private static void bufferedWrite(BufferedWriter bufferedWriter, String message) throws IOException{
+        bufferedWriter.write(message);
+        bufferedWriter.newLine();
+        bufferedWriter.flush();
     }
 }

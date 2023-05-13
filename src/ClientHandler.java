@@ -33,6 +33,21 @@ public class ClientHandler implements Runnable {
             // ...and notifies the client and server that the connection was successful
             bufferedWrite("Server: Connection successful.");
             System.out.println(clientUsername + " has joined.");
+
+            while (!socket.isClosed()) {
+                // Get the player inputs
+                boolean isEven = Boolean.parseBoolean(bufferedReader.readLine());
+                int playerNumber = Integer.parseInt(bufferedReader.readLine());
+
+                // TODO Get and send the actual opponent's number
+                int opponentNumber = 0;
+                bufferedWrite(String.valueOf(opponentNumber));
+
+                if (!Boolean.parseBoolean(bufferedReader.readLine())) {
+                    closeEverything();
+                    break;
+                }
+            }
         } catch (IOException ioException) {
             closeEverything();
         }
