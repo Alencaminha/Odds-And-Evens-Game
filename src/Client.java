@@ -71,7 +71,12 @@ public class Client {
             // ...and sends it to the client handler, completing the connection setup
             bufferedWrite(bufferedWriter, username);
             String messageReceived = bufferedReader.readLine();
-            System.out.println(messageReceived);
+            System.out.println(messageReceived +
+                                "\nWaiting for an opponent to connect.");
+
+            // Get and present the opponent.
+            String opponentUsername = bufferedReader.readLine();
+            System.out.println("Your opponent is " + opponentUsername);
 
             // Start online game loop
             while (loop) {

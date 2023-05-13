@@ -1,11 +1,11 @@
 # Odds And Evens Game
 
-## Uma aplicação para jogar Par ou Ímpar utilizando servidores Sockets
+## Uma aplicação para jogar Par ou Ímpar utilizando servidores Socket
 Este projeto foi desenvolvido como trabalho de conclusão de semestre da matéria de Sistemas Distribuídos.
 
 ## Como jogar
 1. Offline
-    1. Baixe os arquivos .java na pasta 'src'.
+    1. Baixe os arquivos java na pasta src.
     2. Abra seu terminal CMD e vá até a pasta onde estão armazenados seus arquivos da aplicação.
     3. Para cada um dos arquivos na pasta digite o comando 'javac arquivo.java'.
     4. Execute apenas o arquivo Client.

@@ -6,18 +6,23 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientHandler implements Runnable {
+    private static final List<ClientHandler> clientsList = new ArrayList<>();
     private Socket socket;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     private String clientUsername;
+    public boolean isEven;
+    public int playerNumber = 10;
 
     public ClientHandler(Socket socket) {
         try {
             this.socket = socket;
-            this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         } catch (IOException ioException) {
             ioException.printStackTrace();
             closeEverything();
@@ -27,20 +32,24 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            // Get the client username as soon as they connect with the server...
-            this.clientUsername = bufferedReader.readLine();
-
-            // ...and notifies the client and server that the connection was successful
-            bufferedWrite("Server: Connection successful.");
+            // Get the client username and notifies the successful connection
+            clientUsername = bufferedReader.readLine();
+            clientsList.add(this);
+            bufferedWrite("Connection successful!");
             System.out.println(clientUsername + " has joined.");
+
+            // Get and send the matched opponent
+            ClientHandler opponent = getOpponent();
+            String opponentUsername = opponent.clientUsername;
+            bufferedWrite(opponentUsername);
 
             while (!socket.isClosed()) {
                 // Get the player inputs
-                boolean isEven = Boolean.parseBoolean(bufferedReader.readLine());
-                int playerNumber = Integer.parseInt(bufferedReader.readLine());
+                isEven = Boolean.parseBoolean(bufferedReader.readLine());
+                playerNumber = Integer.parseInt(bufferedReader.readLine());
 
-                // TODO Get and send the actual opponent's number
-                int opponentNumber = 0;
+                // Get and send the opponent number
+                int opponentNumber = opponent.playerNumber;
                 bufferedWrite(String.valueOf(opponentNumber));
 
                 if (!Boolean.parseBoolean(bufferedReader.readLine())) {
@@ -50,6 +59,14 @@ public class ClientHandler implements Runnable {
             }
         } catch (IOException ioException) {
             closeEverything();
+        }
+    }
+
+    private ClientHandler getOpponent() {
+        int thisIndex = clientsList.indexOf(this);
+        // Check if there is an even number of connected players
+        while (true) if (clientsList.size() % 2 == 0) {
+            return thisIndex % 2 == 0 ? clientsList.get(thisIndex + 1) : clientsList.get(thisIndex - 1);
         }
     }
 
