@@ -30,6 +30,7 @@ public class Client {
         while (!socket.isClosed()) {
             // Display the game main menu...
             System.out.println("""
+                
                 WELCOME TO THE ODDS AND EVENS GAME
                 1 - You X This machine (PVE)
                 2 - You X Other player (PVP)""");
@@ -42,8 +43,9 @@ public class Client {
             // Get and present the opponent in the case of a PVP match
             String opponentUsername = "Machine";
             if (pvpMatch) {
+                System.out.println("Waiting for an opponent...");
                 opponentUsername = bufferedReader.readLine();
-                System.out.println("Your opponent is " + opponentUsername);
+                System.out.println("Your opponent is " + opponentUsername + "!");
             }
 
             // Open the match loop

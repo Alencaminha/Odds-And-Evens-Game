@@ -35,7 +35,6 @@ public class ClientHandler implements Runnable {
         try {
             // Get the client username and notifies the successful connection
             clientUsername = bufferedReader.readLine();
-            clientsList.add(this);
             messageToClient("Connection successful!");
             System.out.println(clientUsername + " has joined.");
 
@@ -45,10 +44,14 @@ public class ClientHandler implements Runnable {
                 boolean pvpMatch = Boolean.parseBoolean(bufferedReader.readLine());
                 ClientHandler opponent = null;
                 if (pvpMatch) {
+                    clientsList.add(this);
                     // Find and send the matched opponent
-                    opponent = getOpponent();
-                    String opponentUsername = opponent.clientUsername;
-                    messageToClient(opponentUsername);
+                    int index = clientsList.indexOf(this);
+                    while (true) if (clientsList.size() % 2 == 0) {
+                        opponent = index % 2 == 0 ? clientsList.get(index + 1) : clientsList.get(index - 1);
+                        break;
+                    }
+                    messageToClient(opponent.clientUsername);
                 }
 
                 // Open match loop
@@ -73,14 +76,6 @@ public class ClientHandler implements Runnable {
             }
         } catch (IOException ioException) {
             closeEverything();
-        }
-    }
-
-    private ClientHandler getOpponent() {
-        int thisIndex = clientsList.indexOf(this);
-        // Check if there is an even number of connected players
-        while (true) if (clientsList.size() % 2 == 0) {
-            return thisIndex % 2 == 0 ? clientsList.get(thisIndex + 1) : clientsList.get(thisIndex - 1);
         }
     }
 
