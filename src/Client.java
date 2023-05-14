@@ -26,74 +26,71 @@ public class Client {
         messageToClientHandler(username);
         System.out.println(bufferedReader.readLine());
 
-        // Opening the game loop
-        while (!socket.isClosed()) {
-            // Display the game main menu...
-            System.out.println("""
+        // Display the game main menu...
+        System.out.println("""
                 
                 WELCOME TO THE ODDS AND EVENS GAME
                 1 - You X This machine (PVE)
                 2 - You X Other player (PVP)""");
 
-            // ...and get the PVE or PVP match option
-            System.out.print("Please type the number of the game mode you wanna play: ");
-            boolean pvpMatch = validateInput(1, 2, "Please, type only 1 or 2 for this field: ") == 2;
-            messageToClientHandler(String.valueOf(pvpMatch));
+        // ...and get the PVE or PVP match option
+        System.out.print("Please type the number of the game mode you wanna play: ");
+        boolean pvpMatch = validateInput(1, 2, "Please, type only 1 or 2 for this field: ") == 2;
+        messageToClientHandler(String.valueOf(pvpMatch));
 
-            // Get and present the opponent in the case of a PVP match
-            String opponentUsername = "Machine";
+        // Get and present the opponent in the case of a PVP match
+        String opponentUsername = "Machine";
+        if (pvpMatch) {
+            System.out.println("Waiting for an opponent...");
+            opponentUsername = bufferedReader.readLine();
+            System.out.println("Your opponent is " + opponentUsername + "!");
+        }
+
+        // Open the match loop
+        int currentRound = 0, player1Score = 0, player2Score = 0;
+        boolean loop = true;
+        while (loop) {
+            System.out.println("\nROUND " + ++currentRound);
+
+            // Get the choice of odd or even from the player
+            System.out.print("Type 1 for odd or 2 for even: ");
+            boolean isEven = validateInput(1, 2, "Please, type only 1 or 2 for this field: ") == 2;
+
+            // Get the player number
+            System.out.print("Now choose a number from 0 to 5: ");
+            int playerNumber = validateInput(0, 5, "Please, type a number from 0 to 5 for this field: ");
+
+            // Get the opponent number
+            int opponentNumber;
             if (pvpMatch) {
-                System.out.println("Waiting for an opponent...");
-                opponentUsername = bufferedReader.readLine();
-                System.out.println("Your opponent is " + opponentUsername + "!");
+                // Trade data with the client handler
+                messageToClientHandler(String.valueOf(isEven));
+                messageToClientHandler(String.valueOf(playerNumber));
+            }
+            opponentNumber = Integer.parseInt(bufferedReader.readLine());
+            System.out.println("Your opponent number: " + opponentNumber);
+
+            // Checks if the player won
+            if (gameWinner(isEven, playerNumber, opponentNumber)) {
+                System.out.println("You won!");
+                player1Score++;
+            } else {
+                System.out.println("You lost...");
+                player2Score++;
             }
 
-            // Open the match loop
-            int currentRound = 0, player1Score = 0, player2Score = 0;
-            boolean loop = true;
-            while (loop) {
-                System.out.println("\nROUND " + ++currentRound);
-
-                // Get the choice of odd or even from the player
-                System.out.print("Type 1 for odd or 2 for even: ");
-                boolean isEven = validateInput(1, 2, "Please, type only 1 or 2 for this field: ") == 2;
-
-                // Get the player number
-                System.out.print("Now choose a number from 0 to 5: ");
-                int playerNumber = validateInput(0, 5, "Please, type a number from 0 to 5 for this field: ");
-
-                // Get the opponent number
-                int opponentNumber;
-                if (pvpMatch) {
-                    // Trade data with the client handler
-                    messageToClientHandler(String.valueOf(isEven));
-                    messageToClientHandler(String.valueOf(playerNumber));
-                }
-                opponentNumber = Integer.parseInt(bufferedReader.readLine());
-                System.out.println("Your opponent number: " + opponentNumber);
-
-                // Checks if the player won
-                if (gameWinner(isEven, playerNumber, opponentNumber)) {
-                    System.out.println("You won!");
-                    player1Score++;
-                } else {
-                    System.out.println("You lost...");
-                    player2Score++;
-                }
-
-                // Presents the final game score
-                System.out.printf("""
+            // Presents the final game score
+            System.out.printf("""
                         
                         Current score:
                         You => %d
                         %s => %d
                         """, player1Score, opponentUsername, player2Score);
 
-                // Checks if the player wants to play again
-                System.out.printf("Do you want to play against %s again? If so, type 1: ", opponentUsername);
-                loop = scanner.nextInt() == 1;
-                messageToClientHandler(String.valueOf(loop));
-            }
+            // Checks if the player wants to play again
+            System.out.print("Do you want to play again? If so, type 1: ");
+            loop = scanner.nextInt() == 1;
+            messageToClientHandler(String.valueOf(loop));
         }
 
         // Closing the socket + IO streams
