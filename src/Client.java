@@ -71,7 +71,7 @@ public class Client {
             System.out.println("Your opponent number: " + opponentNumber);
 
             // Checks if the player won
-            if (gameWinner(isEven, playerNumber, opponentNumber)) {
+            if (isEven == ((playerNumber + opponentNumber) % 2 == 0)) {
                 System.out.println("You won!");
                 player1Score++;
             } else {
@@ -106,10 +106,6 @@ public class Client {
             input = scanner.nextInt();
         }
         return input;
-    }
-
-    private static boolean gameWinner(boolean player1Even, int player1Number, int player2Number) {
-        return player1Even == ((player1Number + player2Number) % 2 == 0);
     }
 
     private static void messageToClientHandler(String message) throws IOException {
