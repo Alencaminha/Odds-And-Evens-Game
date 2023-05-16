@@ -16,7 +16,7 @@ public class ClientHandler implements Runnable {
     private BufferedWriter bufferedWriter;
     private String clientUsername;
     private int playerNumber = 10;
-    public boolean isEven, loop, loopReceived;
+    public boolean isEven, loop, loopReceived, numberReceived, isEvenReceived;
 
     public ClientHandler(Socket socket) {
         try {
@@ -52,12 +52,22 @@ public class ClientHandler implements Runnable {
 
             // Open match loop
             do {
+                isEvenReceived = false;
+                numberReceived = false;
                 loopReceived = false;
 
-                // Get and send the opponent number to the player
                 isEven = Boolean.parseBoolean(bufferedReader.readLine());
+
+                // Get and send the opponent number to the player
                 playerNumber = Integer.parseInt(bufferedReader.readLine());
-                messageToClient(String.valueOf(opponentHandler.playerNumber));
+                numberReceived = true;
+                while (true) {
+                    System.out.print("");
+                    if (opponentHandler.numberReceived) {
+                        messageToClient(String.valueOf(opponentHandler.playerNumber));
+                        break;
+                    }
+                }
 
                 // Check if the player will continue this match
                 loop = Boolean.parseBoolean(bufferedReader.readLine());
