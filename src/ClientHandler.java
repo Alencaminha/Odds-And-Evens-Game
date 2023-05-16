@@ -8,7 +8,6 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class ClientHandler implements Runnable {
     private static final List<ClientHandler> clientsList = new ArrayList<>();
@@ -38,43 +37,41 @@ public class ClientHandler implements Runnable {
             messageToClient("Connection successful!");
             System.out.println(clientUsername + " has joined.");
 
-            // Open game loop
-            while (!socket.isClosed()) {
-                // Check if the match will be a PVP
-                boolean pvpMatch = Boolean.parseBoolean(bufferedReader.readLine());
-                ClientHandler opponentHandler = null;
-                if (pvpMatch) {
-                    clientsList.add(this);
-                    // Find and send the matched opponent
-                    int index = clientsList.indexOf(this);
-                    boolean matchingLoop = true;
-                    while (matchingLoop) if (clientsList.size() % 2 == 0) {
-                        opponentHandler = index % 2 == 0 ? clientsList.get(index + 1) : clientsList.get(index - 1);
-                        matchingLoop = false;
-                    }
-                    messageToClient(opponentHandler.clientUsername);
+            // Find and send the matched opponent
+            clientsList.add(this);
+            int index = clientsList.indexOf(this);
+            ClientHandler opponentHandler;
+            while (true) {
+                System.out.print("");
+                if (clientsList.size() % 2 == 0) {
+                    opponentHandler = index % 2 == 0 ? clientsList.get(index + 1) : clientsList.get(index - 1);
+                    break;
                 }
-
-                // Open match loop
-                do {
-                    loopReceived = false;
-                    // Get and send the opponent number to the player
-                    int opponentNumber;
-                    if (pvpMatch) {
-                        isEven = Boolean.parseBoolean(bufferedReader.readLine());
-                        playerNumber = Integer.parseInt(bufferedReader.readLine());
-                        opponentNumber = opponentHandler.playerNumber;
-                    } else {
-                        // Generate a random number for the machine
-                        opponentNumber = new Random().nextInt(6);
-                    }
-                    messageToClient(String.valueOf(opponentNumber));
-
-                    // Check if the player will continue this match
-                    loop = Boolean.parseBoolean(bufferedReader.readLine());
-                } while (loop);
-                closeEverything();
             }
+            messageToClient(opponentHandler.clientUsername);
+
+            // Open match loop
+            do {
+                loopReceived = false;
+
+                // Get and send the opponent number to the player
+                isEven = Boolean.parseBoolean(bufferedReader.readLine());
+                playerNumber = Integer.parseInt(bufferedReader.readLine());
+                messageToClient(String.valueOf(opponentHandler.playerNumber));
+
+                // Check if the player will continue this match
+                loop = Boolean.parseBoolean(bufferedReader.readLine());
+                loopReceived = true;
+                while (true) {
+                    System.out.print("");
+                    if (opponentHandler.loopReceived) {
+                        if (!opponentHandler.loop) loop = false;
+                        break;
+                    }
+                }
+                messageToClient(String.valueOf(loop));
+            } while (loop);
+            closeEverything();
         } catch (IOException ioException) {
             closeEverything();
         }
