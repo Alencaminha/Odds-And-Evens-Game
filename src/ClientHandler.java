@@ -17,7 +17,7 @@ public class ClientHandler implements Runnable {
     private BufferedWriter bufferedWriter;
     private String clientUsername;
     private int playerNumber = 10;
-    public boolean isEven;
+    public boolean isEven, loop, loopReceived;
 
     public ClientHandler(Socket socket) {
         try {
@@ -42,27 +42,28 @@ public class ClientHandler implements Runnable {
             while (!socket.isClosed()) {
                 // Check if the match will be a PVP
                 boolean pvpMatch = Boolean.parseBoolean(bufferedReader.readLine());
-                ClientHandler opponent = null;
+                ClientHandler opponentHandler = null;
                 if (pvpMatch) {
                     clientsList.add(this);
                     // Find and send the matched opponent
                     int index = clientsList.indexOf(this);
-                    while (true) if (clientsList.size() % 2 == 0) {
-                        opponent = index % 2 == 0 ? clientsList.get(index + 1) : clientsList.get(index - 1);
-                        break;
+                    boolean matchingLoop = true;
+                    while (matchingLoop) if (clientsList.size() % 2 == 0) {
+                        opponentHandler = index % 2 == 0 ? clientsList.get(index + 1) : clientsList.get(index - 1);
+                        matchingLoop = false;
                     }
-                    messageToClient(opponent.clientUsername);
+                    messageToClient(opponentHandler.clientUsername);
                 }
 
                 // Open match loop
-                boolean loop = true;
-                while (loop) {
+                do {
+                    loopReceived = false;
                     // Get and send the opponent number to the player
                     int opponentNumber;
                     if (pvpMatch) {
                         isEven = Boolean.parseBoolean(bufferedReader.readLine());
                         playerNumber = Integer.parseInt(bufferedReader.readLine());
-                        opponentNumber = opponent.playerNumber;
+                        opponentNumber = opponentHandler.playerNumber;
                     } else {
                         // Generate a random number for the machine
                         opponentNumber = new Random().nextInt(6);
@@ -71,7 +72,7 @@ public class ClientHandler implements Runnable {
 
                     // Check if the player will continue this match
                     loop = Boolean.parseBoolean(bufferedReader.readLine());
-                }
+                } while (loop);
                 closeEverything();
             }
         } catch (IOException ioException) {
