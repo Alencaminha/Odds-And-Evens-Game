@@ -14,7 +14,7 @@ public class Client {
     private static BufferedWriter bufferedWriter;
 
     public static void main(String[] args) throws IOException {
-        boolean pveMatch, loop, isEven;
+        boolean pveMatch, loop, playerIsEven, opponentIsEven;
         int playerNumber, opponentNumber, currentRound = 0, playerScore = 0, opponentScore = 0;
 
         // Display the game main menu...
@@ -33,7 +33,7 @@ public class Client {
 
                 // Get the choice of odd or even from the player
                 System.out.print("Type 1 for odd or 2 for even: ");
-                isEven = validateInput(1, 2, "Please, type only 1 or 2 for this field: ") == 2;
+                playerIsEven = validateInput(1, 2, "Please, type only 1 or 2 for this field: ") == 2;
 
                 // Get the player number
                 System.out.print("Now choose a number from 0 to 5: ");
@@ -44,7 +44,7 @@ public class Client {
                 System.out.println("Your opponent number: " + opponentNumber);
 
                 // Checks if the player won
-                if (isEven == ((playerNumber + opponentNumber) % 2 == 0)) {
+                if (playerIsEven == ((playerNumber + opponentNumber) % 2 == 0)) {
                     System.out.println("You won!");
                     playerScore++;
                 } else {
@@ -88,9 +88,14 @@ public class Client {
                 System.out.println("\nROUND " + ++currentRound);
 
                 // Get the choice of odd or even from the player
-                System.out.print("Type 1 for odd or 2 for even: ");
-                isEven = validateInput(1, 2, "Please, type only 1 or 2 for this field: ") == 2;
-                messageToClientHandler(String.valueOf(isEven));
+                do {
+                    System.out.print("Type 1 for odd or 2 for even: ");
+                    playerIsEven = validateInput(1, 2, "Please, type only 1 or 2 for this field: ") == 2;
+                    messageToClientHandler(String.valueOf(playerIsEven));
+                    opponentIsEven = Boolean.parseBoolean(bufferedReader.readLine());
+                    if (opponentIsEven) System.out.println(opponentUsername + " picked even...");
+                    else System.out.println(opponentUsername + " picked odd...");
+                } while (playerIsEven == opponentIsEven);
 
                 // Get the player number
                 System.out.print("Now choose a number from 0 to 5: ");
@@ -102,7 +107,7 @@ public class Client {
                 System.out.println("Your opponent number: " + opponentNumber);
 
                 // Checks if the player won
-                if (isEven == ((playerNumber + opponentNumber) % 2 == 0)) {
+                if (playerIsEven == ((playerNumber + opponentNumber) % 2 == 0)) {
                     System.out.println("You won!");
                     playerScore++;
                 } else {

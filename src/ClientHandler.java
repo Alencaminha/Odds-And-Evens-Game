@@ -16,7 +16,7 @@ public class ClientHandler implements Runnable {
     private BufferedWriter bufferedWriter;
     private String clientUsername;
     private int playerNumber = 10;
-    public boolean isEven, loop, loopReceived, numberReceived, isEvenReceived;
+    private boolean isEven, loop, loopReceived, numberReceived, isEvenReceived;
 
     public ClientHandler(Socket socket) {
         try {
@@ -56,7 +56,19 @@ public class ClientHandler implements Runnable {
                 numberReceived = false;
                 loopReceived = false;
 
-                isEven = Boolean.parseBoolean(bufferedReader.readLine());
+                // Determines who picks the odd or even choice first
+                do {
+                    isEven = Boolean.parseBoolean(bufferedReader.readLine());
+                    isEvenReceived = true;
+                    while (true) {
+                        System.out.print("");
+                        if (opponentHandler.isEvenReceived) {
+                            messageToClient(String.valueOf(opponentHandler.isEven));
+                            break;
+                        }
+                    }
+                    isEvenReceived = false;
+                } while (isEven == opponentHandler.isEven);
 
                 // Get and send the opponent number to the player
                 playerNumber = Integer.parseInt(bufferedReader.readLine());
