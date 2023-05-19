@@ -18,10 +18,7 @@ public class Client {
         int playerNumber, opponentNumber, currentRound = 0, playerScore = 0, opponentScore = 0;
 
         // Display the game main menu...
-        System.out.println("""
-                WELCOME TO THE ODDS AND EVENS GAME
-                1 - You X This machine (PVE)
-                2 - You X Other player (PVP)""");
+        System.out.println("WELCOME TO THE ODDS AND EVENS GAME\n1 - You X This machine (PVE)\n2 - You X Other player (PVP)");
 
         // ...and get the PVE or PVP match option
         System.out.print("Please type the number of the game mode you wanna play: ");
@@ -53,12 +50,7 @@ public class Client {
                 }
 
                 // Presents the current match score
-                System.out.printf("""
-                        
-                        Current score:
-                        You     => %d
-                        Machine => %d
-                        """, playerScore, opponentScore);
+                System.out.printf("\nCurrent score:\nYou     => %d\nMachine => %d\n", playerScore, opponentScore);
 
                 // Check if the player want ot play again
                 System.out.print("Do you want to play again? If so, type 1: ");
@@ -116,12 +108,7 @@ public class Client {
                 }
 
                 // Presents the current match score
-                System.out.printf("""
-                        
-                        Current score:
-                        You => %d
-                        %s => %d
-                        """, playerScore, opponentUsername, opponentScore);
+                System.out.printf("\nCurrent score:\nYou => %d\n%s => %d\n", playerScore, opponentUsername, opponentScore);
 
                 // Check if both players want to play again
                 System.out.print("Do you want to play again? If so, type 1: ");
