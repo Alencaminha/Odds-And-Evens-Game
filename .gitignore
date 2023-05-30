@@ -5,3 +5,7 @@ out/
 
 # Visual Studio Code
 .vscode/*
+
+# Java files
+*.class
+*.jar

@@ -55,8 +55,8 @@ public class ClientHandler implements Runnable {
                 }
                 opponentUsername = opponentHandler.clientUsername;
             } else {
-                // Machine will be the server name for the PvE
-                opponentUsername = "Machine";
+                // 'the server' will be the server name for the PvE
+                opponentUsername = "the server";
             }
             messageToClient(opponentUsername);
 

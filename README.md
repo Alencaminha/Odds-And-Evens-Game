@@ -9,7 +9,7 @@ Este projeto foi desenvolvido como trabalho de conclusão de semestre da matéri
    1. Para chegar rapidamente à pasta no terminal copie o caminho no seu explorador de arquivos e no terminal realize o
 seguinte comando: 'cd Shift+Insert'.
 3. Execute o comando 'javac *.java' para criar os arquivos classe usados para rodar o jogo.
-4. Execute o comando 'java Server' e aguarde a mensagem de que o servidor está aberto.
+4. Execute o comando 'java Server', digite o PORT do servidor e aguarde a mensagem de que o servidor está aberto.
 5. Execute o comando 'java Client' em outro terminal (ou em X outros terminais se mais de uma pessoa for jogar).
 6. Siga as instruções que aparecerem no terminal para jogar o jogo, e aproveite!
 

@@ -20,7 +20,7 @@ public class Client {
         System.out.print("Enter your username: ");
         PLAYER = scanner.nextLine();
         System.out.print("Enter the desired host: ");
-        HOST = scanner.nextLine();
+        HOST = scanner.nextLine().toLowerCase();
         System.out.print("Enter the server port: ");
         PORT = scanner.nextInt();
 
@@ -36,7 +36,7 @@ public class Client {
         System.out.println(bufferedReader.readLine());
 
         // Display the game main menu...
-        System.out.println("WELCOME TO THE ODDS AND EVENS GAME\n1 - You X This machine (PVE)\n2 - You X Other player (PVP)");
+        System.out.println("\nWELCOME TO THE ODDS AND EVENS GAME\n1 - You X This machine (PVE)\n2 - You X Other player (PVP)");
 
         // ...and get the PVE or PVP match option
         System.out.print("Please type the number of the game mode you wanna play: ");
@@ -58,6 +58,7 @@ public class Client {
                 System.out.print("Type 1 for odd or 2 for even: ");
                 playerIsEven = validateInput(1, 2, "Please, type only 1 or 2 for this field: ") == 2;
                 messageToClientHandler(String.valueOf(playerIsEven));
+                System.out.println("Waiting for " + OPPONENT + "'s input");
 
                 // Get the choice of odd or even from the opponent
                 opponentIsEven = Boolean.parseBoolean(bufferedReader.readLine());
@@ -68,10 +69,11 @@ public class Client {
             System.out.print("Now choose a number from 0 to 5: ");
             playerNumber = validateInput(0, 5, "Please, type a number from 0 to 5 for this field: ");
             messageToClientHandler(String.valueOf(playerNumber));
+            System.out.println("Waiting for " + OPPONENT + "'s input");
 
             // Get the opponent number from the handler
             opponentNumber = Integer.parseInt(bufferedReader.readLine());
-            System.out.println("Your opponent number: " + opponentNumber);
+            System.out.println(OPPONENT + "'s number: " + opponentNumber);
 
             // Checks if the player won
             if (playerIsEven == ((playerNumber + opponentNumber) % 2 == 0)) {
@@ -88,6 +90,7 @@ public class Client {
             // Check if both players want to play again
             System.out.print("Do you want to play again? If so, type 1: ");
             messageToClientHandler(String.valueOf(scanner.nextInt() == 1));
+            System.out.println("Waiting for " + OPPONENT + "'s input");
             loop = Boolean.parseBoolean(bufferedReader.readLine());
         } while (loop);
 
@@ -95,6 +98,7 @@ public class Client {
         bufferedReader.close();
         bufferedWriter.close();
         socket.close();
+        System.out.println("GAME OVER!");
     }
 
     private static int validateInput(int minimalValue, int maximumValue, String incorrectInputMessage) {
