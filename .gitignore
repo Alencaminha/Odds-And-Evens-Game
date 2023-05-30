@@ -1,7 +1,7 @@
 # IntelliJ IDEA
-.idea/
-OddsAndEvensGame.iml
-out/
+.idea/*
+*.iml
+out/*
 
 # Visual Studio Code
 .vscode/*
